@@ -41,7 +41,7 @@ export const BoxesStore = signalStore(
           next: (r) => patchState(store, { boxesValues_: r }),
           error: (e) => {
             console.error(e);
-            matSnackBar.open('Error getting data');
+            matSnackBar.open('Error getting data', undefined, MAT_SNACK_BAR_CONFIG);
           },
         });
       },
