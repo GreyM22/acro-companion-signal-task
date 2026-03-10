@@ -8,8 +8,7 @@ import { BOXES_NUMBER, BoxesStore } from '@shared';
 @Component({
   selector: 'app-boxes-list',
   templateUrl: './boxes-list.component.html',
-  styleUrl: './boxes-list.component.css',
-  imports: [MatButtonToggleModule],
+imports: [MatButtonToggleModule],
   providers: [
     {
       provide: MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
