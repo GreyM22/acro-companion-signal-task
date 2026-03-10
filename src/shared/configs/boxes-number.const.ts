@@ -1,0 +1,1 @@
+export const BOXES_NUMBER = 10;

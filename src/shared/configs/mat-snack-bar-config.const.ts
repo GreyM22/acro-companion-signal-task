@@ -1,0 +1,1 @@
+export const MAT_SNACK_BAR_CONFIG = {duration: 3000};

@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+/* @source ".*.html"; */
+/* @source ".*.ts"; */
+/* Add application styles & imports to this file! */
+
+:root {
+  --custom-border-radius: 7px;
+  --mat-button-toggle-shape: var(--custom-border-radius);
+  --mat-sys-corner-full: var(--custom-border-radius);
+}
+
+.mat-button-toggle-label-content {
+  min-height: 2rem;
+  min-width: 4rem;
+}
+
+.box-option {
+  border: solid 1px
+    var(--mat-button-toggle-divider-color, var(--mat-sys-outline));
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-radius: var(--mat-button-toggle-shape);
+  transition: background-color 150ms ease-in;
+}
+.box-option:hover {
+  cursor: pointer;
+}
+.box-option.active {
+  background-color: var(
+    --mat-button-toggle-selected-state-background-color,
+    var(--mat-sys-secondary-container)
+  );
+}
+.box-option.active:hover {
+  background-color: var(
+    --mat-button-toggle-state-layer-color,
+    var(--mat-sys-on-surface)
+  );
+}

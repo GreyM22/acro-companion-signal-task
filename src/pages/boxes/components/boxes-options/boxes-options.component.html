@@ -1,0 +1,13 @@
+<div class="grid grid-cols-5 gap-4">
+  @for (boxOption of boxOptions_(); track $index) {
+  <span
+    class="box-option"
+    [matTooltip]="boxOption.value"
+    matTooltipPosition="above"
+    [class]="{ active: boxOption.value === selectedOptionValue_() }"
+    (click)="selectOption(boxOption)"
+  >
+    {{ boxOption.symbol }}
+  </span>
+  }
+</div>
