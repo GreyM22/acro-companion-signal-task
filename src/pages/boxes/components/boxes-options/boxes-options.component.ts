@@ -6,7 +6,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-boxes-options',
   imports: [MatTooltipModule],
   templateUrl: './boxes-options.component.html',
-  styleUrl: './boxes-options.component.css',
 })
 export class BoxesOptionsComponent {
   private readonly store = inject(BoxesStore);
