@@ -1,11 +1,15 @@
 <mat-button-toggle-group name="boxes" aria-label="Boxes">
-  @for (boxId of nrOfBoxes; track boxId) { @let box = boxesValues_()[boxId];
-  <mat-button-toggle
-    [checked]="selectedBox_() === boxId"
-    [value]="box?.value"
-    (click)="selectBox(boxId)"
-  >
-    {{ box?.symbol }}
-  </mat-button-toggle>
-  }
+    @for (boxId of nrOfBoxes; track boxId) {
+        @let box = boxesValues_()[ boxId ];
+        <mat-button-toggle
+                [checked]="selectedBox_() === boxId"
+                [value]="box?.value"
+                (click)="selectBox(boxId)"
+        >
+            {{ box?.symbol }}
+            @if (box?.value) {
+                <span class="box-value">{{ box?.value }}</span>
+            }
+        </mat-button-toggle>
+    }
 </mat-button-toggle-group>

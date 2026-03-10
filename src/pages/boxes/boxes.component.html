@@ -3,7 +3,7 @@
   <app-boxes-options class="mt-5 block" />
   <div class="mt-5 flex gap-5 items-center">
     <span> Total: {{ sum_() | number }} </span>
-    <button matButton="filled" color="accent" (click)="deleteData()">
+    <button matButton="filled" (click)="deleteData()">
       <mat-icon>delete</mat-icon>
       Delete
     </button>
