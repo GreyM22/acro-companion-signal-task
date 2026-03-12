@@ -1,3 +1,3 @@
 import { Box } from "./box.type";
 
-export type Boxes = Record<string, Box>;
+export type Boxes = Partial<Record<number, Box>>;
