@@ -1,9 +1,12 @@
 import {computed, inject} from '@angular/core';
-import {signalStore, withState, withMethods, withComputed, withHooks, patchState} from '@ngrx/signals';
+import {patchState, signalStore, withComputed, withHooks, withMethods, withState} from '@ngrx/signals';
 import {Boxes, BoxOption} from '../types';
 import {BoxesDataFetchService} from '../api';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {BOXES_NUMBER, MAT_SNACK_BAR_CONFIG} from '../configs';
+import {rxMethod} from "@ngrx/signals/rxjs-interop";
+import {EMPTY, pipe, switchMap} from "rxjs";
+import {tapResponse} from '@ngrx/operators';
 
 type BoxesState = {
     selectedBox_: number | undefined;
@@ -50,40 +53,72 @@ export const BoxesStore = signalStore(
                 patchState( store, {selectedBox_: index} );
             },
 
-            setBoxValue( value: BoxOption ): void {
-                const selectedBox = store.selectedBox_();
-                if ( selectedBox === undefined ) {
-                    matSnackBar.open(
-                        'You need to select a box to change its value!',
-                        undefined,
-                        MAT_SNACK_BAR_CONFIG
-                    );
-                    return;
-                }
-                boxesDataFetchService.setBoxValue( selectedBox, value ).subscribe( {
-                    next: ( r ) => {
-                        patchState( store, {
-                            boxesValues_: r,
-                            selectedBox_:
-                                (selectedBox === BOXES_NUMBER - 1
-                                    ? selectedBox
-                                    : (selectedBox || 0) + 1) % BOXES_NUMBER,
-                        } );
-                    },
-                    error: ( e ) => {
-                        console.error( e );
+            setBoxValue: rxMethod<BoxOption>(pipe(
+                switchMap((boxOption, i) => {
+                    const selectedBox = store.selectedBox_();
+                    const boxesValues = store.boxesValues_();
+                    /**
+                     * In case there is no box selected to assign it a value
+                     * we show a message to the user
+                     */
+                    if (selectedBox == null) {
                         matSnackBar.open(
-                            'Error changing box value',
+                            'You need to select a box to change its value!',
                             undefined,
                             MAT_SNACK_BAR_CONFIG
                         );
-                    },
-                } );
-            },
+                        return EMPTY;
+                    }
+
+                    /**
+                     * Generate the new state with the new value for
+                     * the new value of the selected box
+                     */
+                    let newBoxes: Boxes;
+
+                    if (!boxesValues) {
+                        newBoxes = { [selectedBox]: { ...boxOption, id: selectedBox } };
+                    } else {
+                        newBoxes = {
+                            ...boxesValues,
+                            [selectedBox]: { ...boxOption, id: selectedBox },
+                        };
+                    }
+
+                    // update the value of the boxes in the server/database
+                    return boxesDataFetchService.updateBoxes(newBoxes).pipe(
+                        tapResponse({
+                            next: (r) => {
+                                /**
+                                 * If the update was successful
+                                 * we update the state value
+                                 * and move selection to the next available box
+                                 * unless we are at the last box
+                                 */
+                                patchState( store, {
+                                    boxesValues_: r,
+                                    selectedBox_:
+                                        (selectedBox === BOXES_NUMBER - 1
+                                            ? selectedBox
+                                            : (selectedBox || 0) + 1) % BOXES_NUMBER,
+                                } );
+                            },
+                            error: (e) => {
+                                console.error( e );
+                                matSnackBar.open(
+                                    'Error changing box value',
+                                    undefined,
+                                    MAT_SNACK_BAR_CONFIG
+                                );
+                            }
+                        })
+                    );
+                })
+            )),
 
             deleteAll(): void {
                 boxesDataFetchService.deleteBoxes().subscribe( {
-                    next: () => patchState( store, {boxesValues_: {}} ),
+                    next: (r) => patchState( store, {boxesValues_: r} ),
                     error: ( e ) => {
                         console.error( e );
                         matSnackBar.open(
