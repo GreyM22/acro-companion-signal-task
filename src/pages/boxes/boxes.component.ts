@@ -9,7 +9,6 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-boxes',
   templateUrl: './boxes.component.html',
-  styleUrl: './boxes.component.css',
   imports: [BoxesListComponent, BoxesOptionsComponent, DecimalPipe, MatButtonModule, MatIconModule],
 })
 export class BoxesComponent {
